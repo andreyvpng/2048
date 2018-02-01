@@ -4,9 +4,12 @@ import sys
 
 
 class Matrix:
+
+    
     def __init__(self, n = 4):
         self.mat = []
         self.new_board(n)
+
 
     def new_board(self, n):
         self.mat = []
@@ -68,6 +71,7 @@ class Matrix:
                 new[i].append(self.mat[j][i])
         self.mat = new
 
+
     def reverse(self):
         new = []
         for i in range(len(self.mat)):
@@ -75,6 +79,7 @@ class Matrix:
             for j in range(len(self.mat)):
                 new[i].append(self.mat[i][len(self.mat[0]) - j - 1])
         self.mat = new
+
     
     def merge(self):
         for i in range(len(self.mat)):
