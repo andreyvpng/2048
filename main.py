@@ -2,148 +2,146 @@ from random import randint
 import os
 import sys
 
-def make_board(n):
-    mat = []
 
-    for i in range(n):
-        mat.append([0] * n)
+class Matrix:
+    def __init__(self, n = 4):
+        self.mat = []
+        self.new_board(n)
 
-    return mat
+    def new_board(self, n):
+        self.mat = []
 
-
-def add_block(mat):
-    free_blocks = []
-
-    for i in range(len(mat)):
-        for j in range(len(mat)):
-            if mat[i][j] == 0:
-                free_blocks.append([i, j])
-
-    if len(free_blocks) > 0:
-        x, y = free_blocks[randint(0, len(free_blocks) - 1)]
-        mat[x][y] = 2
+        for i in range(n):
+            self.mat.append([0] * n)
 
 
-def game_status(mat):
-    for i in range(len(mat)):
-        for j in range(len(mat)):
-            if mat[i][j] == 2048:
-                return "win"
+    def add_block(self):
+        free_blocks = []
 
-            if mat[i][j] == 0:
-                return "ok"
+        for i in range(len(self.mat)):
+            for j in range(len(self.mat)):
+                if self.mat[i][j] == 0:
+                    free_blocks.append([i, j])
 
-            if i + 1 <= len(mat):
-                if mat[i + 1][j] == mat[i][j]:
+        if len(free_blocks) > 0:
+            x, y = free_blocks[randint(0, len(free_blocks) - 1)]
+            self.mat[x][y] = 2
+
+
+    def game_status(self):
+        for i in range(len(self.mat)):
+            for j in range(len(self.mat)):
+                if self.mat[i][j] == 2048:
+                    return "win"
+
+                if self.mat[i][j] == 0:
                     return "ok"
 
-            if j + 1 <= len(mat):
-                if mat[i][j + 1] == mat[i][j]:
-                    return "ok"
+                if i + 1 <= len(self.mat):
+                    if self.mat[i + 1][j] == self.mat[i][j]:
+                        return "ok"
 
-    return "lose"
+                if j + 1 <= len(self.mat):
+                    if self.mat[i][j + 1] == self.mat[i][j]:
+                        return "ok"
 
-
-def print_matrix(mat):
-    if sys.platform == 'win32':
-        os.system('cls')
-    else:
-        os.system('clear')
-    for rows in mat:
-        for item in rows:
-            print(item, end = " ")
-        print()
-    print("\n\n")
+        return "lose"
 
 
-def transpose(mat):
-    new = []
-    for i in range(len(mat)):
-        new.append([])
-        for j in range(len(mat)):
-            new[i].append(mat[j][i])
-    return new
+    def print(self):
+        if sys.platform == 'win32':
+            os.system('cls')
+        else:
+            os.system('clear')
+        for rows in self.mat:
+            for item in rows:
+                print(item, end = " ")
+            print()
+        print("\n\n")
 
 
-def reverse(mat):
-    new = []
-    for i in range(len(mat)):
-        new.append([])
-        for j in range(len(mat[0])):
-            new[i].append(mat[i][len(mat[0]) - j - 1])
-    return new
+    def transpose(self):
+        new = []
+        for i in range(len(self.mat)):
+            new.append([])
+            for j in range(len(self.mat)):
+                new[i].append(self.mat[j][i])
+        self.mat = new
+
+    def reverse(self):
+        new = []
+        for i in range(len(self.mat)):
+            new.append([])
+            for j in range(len(self.mat)):
+                new[i].append(self.mat[i][len(self.mat[0]) - j - 1])
+        self.mat = new
+    
+    def merge(self):
+        for i in range(len(self.mat)):
+            for j in range(len(self.mat) - 1):
+                if self.mat[i][j] == self.mat[i][j + 1] and self.mat[i][j] != 0:
+                    self.mat[i][j] *= 2
+                    self.mat[i][j + 1] = 0
 
 
-def merge(mat):
-    for i in range(len(mat)):
-        for j in range(len(mat) - 1):
-            if mat[i][j] == mat[i][j + 1] and mat[i][j] != 0:
-                mat[i][j] *= 2
-                mat[i][j + 1] = 0
+    def cover_up(self):
+        new = Matrix(len(self.mat))
 
-    return mat
-
-
-def cover_up(mat):
-    new = make_board(len(mat))
-
-    for i in range(len(mat)):
-        count = 0
-        for j in range(len(mat)):
-            if mat[i][j] != 0:
-                new[i][count] = mat[i][j]
-                count += 1
-    return new
+        for i in range(len(self.mat)):
+            count = 0
+            for j in range(len(self.mat)):
+                if self.mat[i][j] != 0:
+                    new.mat[i][count] = self.mat[i][j]
+                    count += 1
+        self.mat = new.mat
 
 
-def up(mat):
-    mat = transpose(mat)
-    mat = cover_up(mat)
-    mat = merge(mat)
-    mat = cover_up(mat)
-    mat = transpose(mat)
-    return mat
+    def up(self):
+        self.transpose()
+        self.cover_up()
+        self.merge()
+        self.cover_up()
+        self.transpose()
 
 
-def down(mat):
-    mat = reverse(transpose(mat))
-    mat = cover_up(mat)
-    mat = merge(mat)
-    mat = cover_up(mat)
-    mat = transpose(reverse(mat))
-    return mat
+    def down(self):
+        self.transpose()
+        self.reverse()
+        self.cover_up()
+        self.merge()
+        self.cover_up()
+        self.reverse()
+        self.transpose()
+    
+
+    def left(self):
+        self.cover_up()
+        self.merge()
+        self.cover_up()
 
 
-def left(mat):
-    mat = cover_up(mat)
-    mat = merge(mat)
-    mat = cover_up(mat)
-    return mat
+    def right(self):
+        self.reverse()
+        self.cover_up()
+        self.merge()
+        self.cover_up()
+        self.reverse()
 
 
-def right(mat):
-    mat = reverse(mat)
-    mat = cover_up(mat)
-    mat = merge(mat)
-    mat = cover_up(mat)
-    mat = reverse(mat)
-    return mat
-
-
-mat = make_board(4)
+mat = Matrix(5)
 
 
 if __name__ == '__main__':
     while True:
-        add_block(mat)
-        print_matrix(mat)
+        mat.add_block()
+        mat.print()
         command = input()
         if command == "w":
-            mat = up(mat)
+            mat.up()
         elif command == "s":
-            mat = down(mat)
+            mat.down()
         elif command == "a":
-            mat = left(mat)
+            mat.left()
         elif command == "d":
-            mat = right(mat)
+            mat.right()
 
