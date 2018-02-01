@@ -1,5 +1,6 @@
 from random import randint
-
+import os
+import sys
 
 def make_board(n):
     mat = []
@@ -44,6 +45,10 @@ def game_status(mat):
 
 
 def print_matrix(mat):
+    if sys.platform == 'win32':
+        os.system('cls')
+    else:
+        os.system('clear')
     for rows in mat:
         for item in rows:
             print(item, end = " ")
@@ -127,15 +132,18 @@ def right(mat):
 
 mat = make_board(4)
 
-while True:
-    add_block(mat)
-    print_matrix(mat)
-    command = input()
-    if command == "w":
-        mat = up(mat)
-    elif command == "s":
-        mat = down(mat)
-    elif command == "a":
-        mat = left(mat)
-    elif command == "d":
-        mat = right(mat)
+
+if __name__ == '__main__':
+    while True:
+        add_block(mat)
+        print_matrix(mat)
+        command = input()
+        if command == "w":
+            mat = up(mat)
+        elif command == "s":
+            mat = down(mat)
+        elif command == "a":
+            mat = left(mat)
+        elif command == "d":
+            mat = right(mat)
+
