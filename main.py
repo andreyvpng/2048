@@ -53,7 +53,7 @@ def print_matrix(mat):
 
 def transpose(mat):
     new = []
-    for i in range(len(mat[0])):
+    for i in range(len(mat)):
         new.append([])
         for j in range(len(mat)):
             new[i].append(mat[j][i])
@@ -65,7 +65,7 @@ def reverse(mat):
     for i in range(len(mat)):
         new.append([])
         for j in range(len(mat[0])):
-            new[i].append(mat[i][len(mat[0])-j-1])
+            new[i].append(mat[i][len(mat[0]) - j - 1])
     return new
 
 
@@ -79,30 +79,63 @@ def merge(mat):
     return mat
 
 
+def cover_up(mat):
+    new = make_board(len(mat))
+
+    for i in range(len(mat)):
+        count = 0
+        for j in range(len(mat)):
+            if mat[i][j] != 0:
+                new[i][count] = mat[i][j]
+                count += 1
+    return new
+
+
 def up(mat):
-    pass
+    mat = transpose(mat)
+    mat = cover_up(mat)
+    mat = merge(mat)
+    mat = cover_up(mat)
+    mat = transpose(mat)
+    return mat
 
 
 def down(mat):
-    pass
+    mat = reverse(transpose(mat))
+    mat = cover_up(mat)
+    mat = merge(mat)
+    mat = cover_up(mat)
+    mat = transpose(reverse(mat))
+    return mat
 
 
 def left(mat):
-    pass
+    mat = cover_up(mat)
+    mat = merge(mat)
+    mat = cover_up(mat)
+    return mat
 
 
 def right(mat):
-    pass
+    mat = reverse(mat)
+    mat = cover_up(mat)
+    mat = merge(mat)
+    mat = cover_up(mat)
+    mat = reverse(mat)
+    return mat
 
 
 mat = make_board(4)
-add_block(mat)
-print_matrix(mat)
 
-
-
-
-
-
-
-
+while True:
+    add_block(mat)
+    print_matrix(mat)
+    command = input()
+    if command == "w":
+        mat = up(mat)
+    elif command == "s":
+        mat = down(mat)
+    elif command == "a":
+        mat = left(mat)
+    elif command == "d":
+        mat = right(mat)
