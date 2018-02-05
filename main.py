@@ -71,12 +71,10 @@ class Matrix:
                 if self.mat[i][j] == 0:
                     return "ok"
 
-                if i + 1 <= len(self.mat):
-                    if self.mat[i + 1][j] == self.mat[i][j]:
-                        return "ok"
+                if i + 1 <= len(self.mat) - 1 and self.mat[i + 1][j] == self.mat[i][j]:
+                    return "ok"
 
-                if j + 1 <= len(self.mat):
-                    if self.mat[i][j + 1] == self.mat[i][j]:
+                if j + 1 <= len(self.mat) - 1 and self.mat[i][j + 1] == self.mat[i][j]:
                         return "ok"
 
         return "lose"
@@ -219,6 +217,12 @@ class App:
             if self.commands[event.char](self.mat):
                 self.mat.add_block()
             self.update_grid_cells()
+
+            if self.mat.game_status() == "lose":
+                print("lose!")
+                self.root.destroy()
+
+                self.mat.print()
 
 
 if __name__ == '__main__':
